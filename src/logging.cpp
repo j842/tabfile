@@ -11,6 +11,12 @@
 
 #include "crowinc.h"
 
+const std::string getLogPath()
+{
+    static const std::string gLogPath = "/tmp/tabfile.log";
+
+    return gLogPath;
+}
 
 class CustomLogger : public crow::ILogHandler {
  public:
@@ -46,7 +52,7 @@ void config_logging()
             std::vector<spdlog::sink_ptr> sinks;
             //sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>(getConfig().getLogPath()));
             //sinks.push_back(std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(500));
-            sinks.push_back(std::make_shared<spdlog::sinks::rotating_file_sink_mt>("/tmp/tabfile.log",5 * 1024 * 1024,5));
+            sinks.push_back(std::make_shared<spdlog::sinks::rotating_file_sink_mt>(getLogPath(),5 * 1024 * 1024,5));
             sinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
 
             auto logger = std::make_shared<spdlog::logger>("main", sinks.begin(), sinks.end());
