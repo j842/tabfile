@@ -1,6 +1,13 @@
 # tabfile
 
 
+
+## Production Setup
+```
+sudo apt install libasio-dev libspdlog1.10
+```
+
+
 ## Development Setup
 
 If using VS Code, set the cppStandard to c++17.
@@ -32,8 +39,3 @@ cmake .. && make -j
 sudo make install
 ```
 
-
-## Production Setup
-```
-sudo apt install libasio-dev libspdlog1.10
-```
