@@ -33,4 +33,9 @@ class cArgs
         std::vector<std::string> mArgs;
 };
 
+
+bool ichar_equals(char a, char b);
+bool iequals(const std::string &a, const std::string &b);
+void trim(std::string &str);
+
 #endif
