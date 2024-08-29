@@ -105,7 +105,7 @@ void cmain::addroute_Main()
             return res;
         }
         else
-            return crow::response("<html><body>Unable to find "+s+"</body></html>");
+            return crow::response(404,"<html><body>Unable to find "+s+"</body></html>");
     });
 }
 
