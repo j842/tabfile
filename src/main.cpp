@@ -97,7 +97,7 @@ void cmain::addroute_Main()
         if (string2path(s,p))
         {
             std::chrono::steady_clock::time_point tend = std::chrono::steady_clock::now();
-            spdlog::info("{} -> {} in {} s",s,p.filename().string(),
+            spdlog::info("[{}] -> [{}] in {} µs",s,p.filename().string(),
                             std::chrono::duration_cast<std::chrono::microseconds>(tend - tbegin).count()); 
             
             crow::response res(200);
