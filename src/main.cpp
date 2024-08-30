@@ -133,6 +133,8 @@ void cmain::addroute_Files()
             
             crow::response res(200);
             res.set_static_file_info_unsafe(p.string());
+            if (iequals(p.extension(),".mp4"))
+                res.add_header("Content-Type","video/mp4");
             return res;
         }
         else
