@@ -18,6 +18,7 @@ class cmain
 
     private:        
         void addroute_Main();
+        void addroute_Robots();
 
         void showhelp();
         

@@ -103,6 +103,7 @@ cmain::cmain(int argc, char **argv) : mArgs(argc, argv)
 
     spdlog::info("reading from "+mDir.string());
 
+    addroute_Robots();
     addroute_Main();
 
     mApp.port(port)
@@ -136,6 +137,19 @@ void cmain::addroute_Main()
         else
             return crow::response(404,"<html><body>Unable to find "+s+"</body></html>");
     });
+}
+
+void cmain::addroute_Robots()
+{
+    CROW_ROUTE(mApp, "/robots.txt")
+    ([&] {
+
+        return crow::response(200,
+        R"END(
+User-agent: *
+Disallow: /
+        )END");
+});
 }
 
 void cmain::showhelp()
