@@ -103,8 +103,9 @@ cmain::cmain(int argc, char **argv) : mArgs(argc, argv)
 
     spdlog::info("reading from "+mDir.string());
 
+    addroute_Root();
     addroute_Robots();
-    addroute_Main();
+    addroute_Files();
 
     mApp.port(port)
         .multithreaded()
@@ -115,7 +116,7 @@ cmain::~cmain()
 {
 }
 
-void cmain::addroute_Main()
+void cmain::addroute_Files()
 {
     CROW_ROUTE(mApp, "/<string>")
     ([&](std::string s) {
@@ -135,7 +136,16 @@ void cmain::addroute_Main()
             return res;
         }
         else
-            return crow::response(404,"<html><body>Unable to find "+s+"</body></html>");
+            return crow::response(404,R"END(
+<html><body>
+<center>
+<p><h1>Tabula.Directory does not contain the specified file.</h1></p>
+
+<p>For assistance, please contact our Support team:</p>
+<a href="https://www.tabula.live/contact">Contact Us</a>
+</center>
+</body></html>
+            )END");
     });
 }
 
@@ -150,6 +160,23 @@ User-agent: *
 Disallow: /
         )END");
 });
+}
+
+void cmain::addroute_Root()
+{
+    CROW_ROUTE(mApp, "/")
+    ([&] {
+             return crow::response(200,R"END(
+<html><body>
+<center>
+<p><h1>The Tabula file directory is not browseable.</h1></p>
+
+<p>For assistance, please contact our Support team:</p>
+<a href="https://www.tabula.live/contact">Contact Us</a>
+</center>
+</body></html>
+            )END");       
+    });
 }
 
 void cmain::showhelp()

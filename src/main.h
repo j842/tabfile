@@ -17,8 +17,9 @@ class cmain
         ~cmain();
 
     private:        
-        void addroute_Main();
+        void addroute_Files();
         void addroute_Robots();
+        void addroute_Root();
 
         void showhelp();
         
