@@ -45,20 +45,49 @@ std::string num2str(int n)
     return oss.str();
 }
 
+uint16_t str2uint16(const std::string & s)
+{
+    try
+    {    
+        int myInt(std::stoi(s));
+        uint16_t myInt16(0);
+        if (myInt <= static_cast<int>(UINT16_MAX) && myInt >=0) {
+            myInt16 = static_cast<uint16_t>(myInt);
+            return myInt16;
+        }    
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+
+    return 0;
+}
+
 cmain::cmain(int argc, char **argv) : mArgs(argc, argv)
 {
-    const uint16_t port = 8080;
+    uint16_t port = 8080;
 
     config_logging();
 
-    spdlog::info("------------------------------------------------------------------------");
-    spdlog::info("tabfile running on port " + num2str(port) + "! Logging to " + getLogPath());
-
-    if (!mArgs.validate({"d"}))
+    if (!mArgs.validate({"d","p"}))
         showhelp();
-
     if (mArgs.numArgs() < 1)
         showhelp();
+
+    if (mArgs.hasOpt({"p"}))
+    {
+        std::string portopt = mArgs.getValue({"p"});
+        if (portopt.length()==0)
+            showhelp();
+        port = str2uint16(portopt);
+        if (port<80)
+            showhelp();
+    }
+
+
+    spdlog::info("------------------------------------------------------------------------");
+    spdlog::info("tabfile running on port " + num2str(port) + "! Logging to " + getLogPath());
 
     if (mArgs.hasOpt({"d"}))
     {
@@ -117,6 +146,8 @@ void cmain::showhelp()
     tabfile DIRECTORY [OPTIONS]
 
     Options:
+        -p=PORT
+            run on given PORT (default is 8080)
         -d
             run as daemon
       
