@@ -4,7 +4,9 @@
 tabfile [-d] DIRECTORY
 ```
 
-Given the directory dir, tabfile watches the tree ```dir/source``` for changes, and creates symlinks in ```dir/output```.
+tabfile is a small custom tool used to create unchanging symlinks that always take you to the latest version of a file resource. It's intended to be used behind a web server (e.g. nginx), to host the files via those symlinks.
+
+Given the directory ```dir```, tabfile watches the tree ```dir/source``` for changes, and creates symlinks in ```dir/output```.
 
 - The symlink name is the name of the parent folder of a file.
 - Only the latest file in that folder is symlinked (so each folder reperesents one file, with multiple versions in the folder).
