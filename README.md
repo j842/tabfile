@@ -1,5 +1,16 @@
 # tabfile
 
+```
+tabfile [-d] DIRECTORY
+```
+
+Given the directory dir, tabfile watches the tree ```dir/source``` for changes, and creates symlinks in ```dir/output```.
+
+- The symlink name is the name of the parent folder of a file.
+- Only the latest file in that folder is symlinked (so each folder reperesents one file, with multiple versions in the folder).
+- Files must be named starting with an 8 digit date format: ```YYYMMDD```, otherwise will be ignored.
+
+
 
 
 ## Production Setup
