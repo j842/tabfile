@@ -70,6 +70,7 @@ cmain::cmain(int argc, char **argv) : mArgs(argc, argv)
     }
 
     symbro b(mDir);
+    b.erase();
     b.rescan();
     b.watch();
 }

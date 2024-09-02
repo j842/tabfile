@@ -10,6 +10,7 @@
 std::string num2str(int n);
 uint16_t str2uint16(const std::string & s);
 int getdate(std::string s);
+void deleteDirectoryContents(const std::filesystem::path& dir);
 
 // watch a folder for changes in it.
 #define EVENT_SIZE  ( sizeof (struct inotify_event) )

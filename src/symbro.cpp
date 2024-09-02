@@ -5,6 +5,8 @@
 #include "utils.h"
 
 
+
+
 symbro::symbro(std::filesystem::path p) :  
     mDir(p),
     mSource(p/"source"),
@@ -15,7 +17,12 @@ symbro::symbro(std::filesystem::path p) :
 
     if (!std::filesystem::is_directory(mOutput))
         throw std::runtime_error("Missing required directory for output files: "+(mOutput).string());
+}
 
+void symbro::erase()
+{
+    spdlog::info("- Deleting symlinks in {}",mOutput.string());
+    deleteDirectoryContents(mOutput);
 }
 
 void symbro::rescan()
@@ -27,7 +34,7 @@ void symbro::rescan()
     for (auto const& dir_entry : std::filesystem::recursive_directory_iterator(mSource))
         if (dir_entry.is_directory())
         {
-            std::string x = dir_entry.path().filename();
+            std::string fname = dir_entry.path().filename();
             bool foundlatest=false;
             std::string latestd="0";
             std::filesystem::path p;
@@ -45,7 +52,7 @@ void symbro::rescan()
             if (foundlatest)
             { // check symlink
                 bool relink=true;
-                std::filesystem::path lnk = mOutput/x;
+                std::filesystem::path lnk = mOutput/(fname+p.extension().string());
                 if (std::filesystem::is_symlink(lnk))
                 { // is it up to date?
                     std::filesystem::path orig = std::filesystem::read_symlink(lnk);
@@ -60,7 +67,9 @@ void symbro::rescan()
                     
                     std::filesystem::create_symlink(p,lnk);
 
-                    spdlog::info("-- Created symlink: {} -> {}",x,p.string());
+                    spdlog::info("-- Created symlink: {} -> {}",
+                        (fname+p.extension().string())
+                        ,p.string());
                 }
             }
         }
@@ -79,3 +88,4 @@ void symbro::watch()
         rescan();
     }
 }
+

@@ -109,3 +109,8 @@ int getdate(std::string s)
     }
 }
 
+void deleteDirectoryContents(const std::filesystem::path& dir)
+{
+    for (const auto& entry : std::filesystem::directory_iterator(dir)) 
+        std::filesystem::remove_all(entry.path());
+}

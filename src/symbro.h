@@ -9,6 +9,8 @@ class symbro
     public:
         symbro(std::filesystem::path p);
 
+        void erase();
+
         void rescan();
 
         void watch(); // blocks forever!
