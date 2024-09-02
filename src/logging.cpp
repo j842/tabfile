@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <sstream>
 
 #include "logging.h"
 
@@ -9,41 +10,12 @@
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/ringbuffer_sink.h>
 
-#include "crowinc.h"
-
 const std::string getLogPath()
 {
     static const std::string gLogPath = "/tmp/tabfile.log";
 
     return gLogPath;
 }
-
-class CustomLogger : public crow::ILogHandler {
- public:
-  CustomLogger() {}
-  void log(std::string message, crow::LogLevel level) {
-
-    switch (level)
-    {
-        case crow::LogLevel::Warning:
-            spdlog::warn("CROW: {}",message);
-            break;        
-        case crow::LogLevel::Error:
-            spdlog::error("CROW: {}",message);
-            break;        
-        case crow::LogLevel::Critical:
-            spdlog::critical("CROW: {}",message);
-            break;        
-        case crow::LogLevel::Info:
-        case crow::LogLevel::Debug:
-        default:
-            spdlog::debug("CROW: {}",message);
-            break;
-    }
-  }
-};
-
-static CustomLogger sLogger;
 
 void config_logging()
 {
@@ -69,10 +41,6 @@ void config_logging()
             std::cerr << "Log init failed: " << ex.what() << std::endl;
             exit(EXIT_FAILURE);
         }
-
-
-    // configure logger for crow.
-    crow::logger::setHandler(&sLogger);
 }
 
 std::string get_ringbuffer()

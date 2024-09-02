@@ -3,8 +3,6 @@
 
 #include <filesystem>
 
-#include "crowinc.h"
-#include "json.hpp"
 #include "args.h"
 
 
@@ -17,19 +15,10 @@ class cmain
         ~cmain();
 
     private:        
-        void addroute_Files();
-        void addroute_Robots();
-        void addroute_Root();
-
         void showhelp();
-        
-        bool string2path(const std::string s, std::filesystem::path & p);
-        bool matches(const std::string & search, const std::string & folder);
-
+    
     private:
-        crow::SimpleApp mApp;
         cArgs mArgs;
-
         std::filesystem::path mDir;
 };
 
