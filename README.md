@@ -10,6 +10,7 @@ Given the directory dir, tabfile watches the tree ```dir/source``` for changes, 
 - Only the latest file in that folder is symlinked (so each folder reperesents one file, with multiple versions in the folder).
 - Files must be named starting with an 8 digit date format: ```YYYMMDD```, otherwise will be ignored.
 
+Logs are written to ```/tmp/tabfile.log```.
 
 
 
