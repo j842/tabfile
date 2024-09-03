@@ -201,7 +201,7 @@ R"HTMLFILE(
             border-collapse: collapse;
             }
             th, td {
-            padding: 15px;
+            padding: 10px;
             }
         </style>
     </head>
