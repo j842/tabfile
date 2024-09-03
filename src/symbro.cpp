@@ -17,9 +17,6 @@ symbro::symbro(std::filesystem::path p, std::string baseURL) :
     if (!std::filesystem::is_directory(mSource))
         throw std::runtime_error("Missing required directory for source files: "+(mSource).string());
 
-    if (!std::filesystem::is_directory(mOutput))
-        throw std::runtime_error("Missing required directory for output files: "+(mOutput).string());
-
     create_directories(mLinks);    
     create_directories(mQR);    
 }
@@ -192,14 +189,56 @@ void indexwriter_xlsx::addrow(int rowindex, const std::string &url, const std::s
 indexwriter_html::indexwriter_html(std::filesystem::path p)
 {
     ofs.open(p.string());
+
+    ofs <<
+R"HTMLFILE(
+    <html>
+    <head>
+        <title>Directory Index</title>
+        <style>
+            table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            }
+            th, td {
+            padding: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <table>
+            <caption>
+                Directory Index
+            </caption>
+        <thead>
+            <tr>
+            <th scope="col">Link</th>
+            <th scope="col">Parent</th>
+            <th scope="col">Original File</th>
+            <th scope="col">QR Code</th>
+            </tr>
+        </thead>
+        <tbody>
+)HTMLFILE"; 
 }
 
 indexwriter_html::~indexwriter_html()
 {
+    ofs <<
+R"HTMLFILE(
+        </tbody>
+    </body>
+)HTMLFILE"; 
+
     ofs.close();
 }
 
-void indexwriter_html::addrow(int rowindex, const std::string &url, const std::string &parent, const std::string &origfile, const std::string &qrcodelink)
+void indexwriter_html::addrow(int /*rowindex*/, const std::string &url, const std::string &parent, const std::string &origfile, const std::string &qrcodelink)
 {
-    ofs << rowindex << url << parent << origfile << qrcodelink << std::endl;
+    ofs << "<tr>" << std::endl <<
+    "<td><a href=\""<<url<<"\">"<<url<<"</a></td>"<<std::endl <<
+    "<td>"<<parent<<"</td>"<<std::endl <<
+    "<td>"<<origfile<<"</td>"<<std::endl <<
+    "<td><a href=\""<<qrcodelink<<"\">"<<qrcodelink<<"</a></td>" <<std::endl <<
+    "</tr>"<<std::endl;
 }
