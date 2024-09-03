@@ -200,22 +200,29 @@ R"HTMLFILE(
         <title>Directory Index</title>
         <style>
             table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
+                color: #242424;
+                border: 1px solid black;
+                border-collapse: collapse;
             }
             th, td {
-            padding: 10px;
+                padding: 10px;
             }
-             tr:nth-child(even) {
-            background-color: #dddddd;
+            tr:nth-child(even) {
+                background-color: #dddddd;
+            }             
+            tr:nth-child(odd) {
+                background-color: #fefefe;
+            }
+            body {
+                color: #fefefe;
+                background-color: #242424;
             }
         </style>
     </head>
     <body>
+        <center>
+            <p>Directory Index</p>
         <table>
-            <caption>
-                Directory Index
-            </caption>
         <thead>
             <tr>
             <th scope="col">Link</th>
@@ -233,6 +240,7 @@ indexwriter_html::~indexwriter_html()
     ofs <<
 R"HTMLFILE(
         </tbody>
+        </center>
     </body>
 )HTMLFILE"; 
 
