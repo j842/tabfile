@@ -26,7 +26,7 @@ class symbro
     private:
         std::filesystem::path mDir;
         std::filesystem::path mSource;
-        std::filesystem::path _mOutput;
+        std::filesystem::path mOutput;
 
         std::filesystem::path mLinks;
         std::filesystem::path mQR;

@@ -11,7 +11,7 @@
 symbro::symbro(std::filesystem::path p, std::string baseURL) :  
     mDir(p),
     mSource(p/"source"),
-    _mOutput(p/"output"),
+    mOutput(p/"output"),
     mLinks(p/"output"/"links"),
     mQR(p/"output"/"qr"),
     mURL(baseURL)
@@ -19,8 +19,8 @@ symbro::symbro(std::filesystem::path p, std::string baseURL) :
     if (!std::filesystem::is_directory(mSource))
         throw std::runtime_error("Missing required directory for source files: "+(mSource).string());
 
-    if (!std::filesystem::is_directory(_mOutput))
-        throw std::runtime_error("Missing required directory for output files: "+(_mOutput).string());
+    if (!std::filesystem::is_directory(mOutput))
+        throw std::runtime_error("Missing required directory for output files: "+(mOutput).string());
 
     create_directories(mLinks);    
     create_directories(mQR);    
@@ -70,7 +70,7 @@ void symbro::rescan()
 
 void symbro::make_index()
 {
-    std::filesystem::path indexpath = mSource/"index.xlsx";
+    std::filesystem::path indexpath = mOutput/"directory_index.xlsx";
     create_directories(indexpath.parent_path());
 
     spdlog::info("- Creating index at {}",indexpath.string());
@@ -112,8 +112,6 @@ void symbro::make_index()
         }
     }
     workbook_close(workbook);
-
-    checklink(indexpath, mLinks/"__directory_index.xlsx");
 }
 
 void symbro::watch()
