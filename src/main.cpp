@@ -41,7 +41,10 @@ int  daemonise()
     return EXIT_SUCCESS;
 }
 
-
+bool startswith(std::string big, std::string small)
+{
+    return (iequals(big.substr(0,small.length()),small));
+}
 
 cmain::cmain(int argc, char **argv) : mArgs(argc, argv)
 {
@@ -74,6 +77,11 @@ R"TITLE(
     spdlog::info("reading from "+mDir.string());
 
     mURL = mArgs.getArg(1);
+
+    std::string https="https://";
+    std::string http="http://";
+    if (!startswith(mURL,https) && !startswith(mURL,http))
+        mURL = "https://"+mURL;
 
     spdlog::info("Index URL is "+mURL+"/__directory_index.xslx");
 
