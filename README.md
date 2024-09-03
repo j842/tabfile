@@ -18,7 +18,7 @@ Logs are written to ```/tmp/tabfile.log```. The ```-d``` option causes tabfile t
 
 ## Production Setup
 ```
-sudo apt install libasio-dev libspdlog1.10
+sudo apt install libasio-dev libspdlog1.10 libxlsxwriter5
 ```
 
 
@@ -29,7 +29,7 @@ If using VS Code, set the cppStandard to c++17.
 ### General
 
 ```
-sudo apt install zlib1g-dev libdeflate-dev cmake libssl-dev libasio-dev clang build-essential libfmt-dev
+sudo apt install zlib1g-dev libdeflate-dev cmake libssl-dev libasio-dev clang build-essential libfmt-dev libxlsxwriter-dev
 ```
 
 ### Make

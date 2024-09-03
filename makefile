@@ -3,7 +3,7 @@ MAKEFLAGS += -j$(NPROCS)
 CXX      := -clang++
 #CXX      := -g++
 CXXFLAGS := -pedantic-errors -Wall -Wextra -Werror -Wfatal-errors -std=c++17
-LDFLAGS  := -lrt -lpthread -lspdlog -lfmt
+LDFLAGS  := -lrt -lpthread -lspdlog -lfmt -lxlsxwriter
 BUILD    := ./build
 OBJ_DIR  := $(BUILD)/objects
 APP_DIR  := $(BUILD)

@@ -45,11 +45,23 @@ int  daemonise()
 
 cmain::cmain(int argc, char **argv) : mArgs(argc, argv)
 {
+    std::cout <<
+R"TITLE(
+
+            __ __|       |      ____| _)  |       
+               |   _` |  __ \   |      |  |   _ \ 
+               |  (   |  |   |  __|    |  |   __/ 
+              _| \__,_| _.__/  _|     _| _| \___| 
+
+
+)TITLE"; 
+
+
     config_logging();
 
     if (!mArgs.validate({"d"}))
         showhelp();
-    if (mArgs.numArgs() < 1)
+    if (mArgs.numArgs() < 2)
         showhelp();
 
     spdlog::info("------------------------------------------------------------------------");
@@ -61,6 +73,10 @@ cmain::cmain(int argc, char **argv) : mArgs(argc, argv)
 
     spdlog::info("reading from "+mDir.string());
 
+    mURL = mArgs.getArg(1);
+
+    spdlog::info("Index URL is "+mURL+"/__directory_index.xslx");
+
     if (mArgs.hasOpt({"d"}))
     {
         std::cout << ">> DAEMONISING " << std::endl
@@ -69,9 +85,10 @@ cmain::cmain(int argc, char **argv) : mArgs(argc, argv)
             throw std::runtime_error("Failed to daemonise");
     }
 
-    symbro b(mDir);
+    symbro b(mDir,mURL);
     b.erase();
     b.rescan();
+    b.make_index();
     b.watch();
 }
 
@@ -84,7 +101,7 @@ void cmain::showhelp()
       std::cout <<
         R"END(
 
-    tabfile DIRECTORY [OPTIONS]
+    tabfile DIRECTORY BASE_URL [OPTIONS]
 
     Options:
         -d

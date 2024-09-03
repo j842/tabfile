@@ -20,6 +20,7 @@ class cmain
     private:
         cArgs mArgs;
         std::filesystem::path mDir;
+        std::string mURL;
 };
 
 
