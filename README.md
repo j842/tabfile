@@ -1,16 +1,30 @@
 # tabfile
 
 ```
-tabfile [-d] DIRECTORY
+            __ __|       |      ____| _)  |
+               |   _` |  __ \   |      |  |   _ \
+               |  (   |  |   |  __|    |  |   __/
+              _| \__,_| _.__/  _|     _| _| \___|
+
+
+
+
+    tabfile DIRECTORY BASE_URL [OPTIONS]
+
+    Options:
+        -d
+            run as daemon
 ```
 
 tabfile is a small custom tool used to create unchanging symlinks that always take you to the latest version of a file resource. It's intended to be used behind a web server (e.g. nginx), to host the files via those symlinks.
 
-Given the directory ```dir```, tabfile watches the tree ```dir/source``` for changes, and creates symlinks in ```dir/output```.
+Given the directory ```dir```, tabfile watches the tree ```dir/source``` for changes, and creates symlinks, qr codes and a directory index in ```dir/output```.
 
-- The symlink name is the name of the parent folder of a file.
+- The symlink name is the name of the parent folder of a file, together with the file's extension.
 - Only the latest file in that folder is symlinked (so each folder reperesents one file, with multiple versions in the folder).
 - Files must be named starting with an 8 digit date format: ```YYYMMDD```, otherwise will be ignored.
+- The BASE_URL should be in the form ```https://HOSTNAME```, and is used in the index.
+- The index is currently an Excel file.
 
 Logs are written to ```/tmp/tabfile.log```. The ```-d``` option causes tabfile to run as a daemon.
 
