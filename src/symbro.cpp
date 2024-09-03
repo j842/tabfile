@@ -70,7 +70,7 @@ void symbro::rescan()
 
 void symbro::make_index()
 {
-    std::filesystem::path indexpath = mSource/"__directory_index"/"index.xlsx";
+    std::filesystem::path indexpath = mSource/"index.xlsx";
     create_directories(indexpath.parent_path());
 
     spdlog::info("- Creating index at {}",indexpath.string());
@@ -178,5 +178,5 @@ std::filesystem::path symbro::getQRPath(std::filesystem::path lnk)
 }
 std::string symbro::getQRURL(std::filesystem::path lnk)
 {
-    return mURL+"/"+lnk.filename().string()+kQRext;
+    return mURL+"/qr/"+lnk.filename().string()+kQRext;
 }
