@@ -34,8 +34,4 @@ class cArgs
 };
 
 
-bool ichar_equals(char a, char b);
-bool iequals(const std::string &a, const std::string &b);
-void trim(std::string &str);
-
 #endif

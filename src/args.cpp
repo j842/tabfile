@@ -1,22 +1,8 @@
 #include <iostream>
 
 #include "args.h"
+#include "utils.h"
 
-bool ichar_equals(char a, char b)
-{
-    return std::tolower(static_cast<unsigned char>(a)) ==
-           std::tolower(static_cast<unsigned char>(b));
-}
-bool iequals(const std::string &a, const std::string &b)
-{
-    return std::equal(a.begin(), a.end(), b.begin(), b.end(), ichar_equals);
-}
-void trim(std::string &str)
-{
-    const char *typeOfWhitespaces = " \t\n\r\f\v";
-    str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
-    str.erase(0, str.find_first_not_of(typeOfWhitespaces));
-}
 
 cArgs::cArgs(int argc, char **argv)
 {

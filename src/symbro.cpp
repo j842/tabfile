@@ -42,6 +42,8 @@ void symbro::rescan()
             std::filesystem::path p;
             for (auto const & sub_entry : std::filesystem::directory_iterator(dir_entry.path()))
             {
+                if (!iequals(sub_entry.path().extension(),".identifier")) // skip identifier files from Windows.
+                {
                     std::string s = sub_entry.path().filename();
                     if (getdate(s)>getdate(latestd))
                     {
@@ -49,6 +51,7 @@ void symbro::rescan()
                         p=sub_entry.path();
                         foundlatest=true;
                     }
+                }
             }
 
             if (foundlatest)
@@ -202,6 +205,9 @@ R"HTMLFILE(
             }
             th, td {
             padding: 10px;
+            }
+             tr:nth-child(even) {
+            background-color: #dddddd;
             }
         </style>
     </head>

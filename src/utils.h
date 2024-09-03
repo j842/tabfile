@@ -5,7 +5,7 @@
 #include <sys/types.h>
 #include <sys/inotify.h>
 #include <vector>
-
+#include <filesystem>
 
 std::string num2str(int n);
 uint16_t str2uint16(const std::string & s);
@@ -30,6 +30,10 @@ class watcher
 };
     
 
+
+bool ichar_equals(char a, char b);
+bool iequals(const std::string &a, const std::string &b);
+void trim(std::string &str);
 
 
 
