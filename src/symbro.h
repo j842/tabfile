@@ -2,7 +2,56 @@
 #define __SYMBRO_H
 
 #include <string>
+#include <fstream>
 #include <filesystem>
+#include <xlsxwriter.h>
+
+class indexwriter
+{
+    public:
+        virtual ~indexwriter() {};
+
+        virtual void addrow(int rowindex,
+                            const std::string & url,
+                            const std::string & parent,
+                            const std::string & origfile,
+                            const std::string & qrcodelink) =0;
+};
+
+class indexwriter_xlsx : public indexwriter
+{
+    public:
+        indexwriter_xlsx(std::filesystem::path p);
+        ~indexwriter_xlsx();
+
+        void addrow(int rowindex,
+                        const std::string & url,
+                        const std::string & parent,
+                        const std::string & origfile,
+                        const std::string & qrcodelink);
+
+    private:
+        lxw_workbook  * workbook;
+        lxw_worksheet * worksheet;
+
+};
+
+class indexwriter_html : public indexwriter
+{
+    public:
+        indexwriter_html(std::filesystem::path p);
+        ~indexwriter_html();
+
+        void addrow(int rowindex,
+                        const std::string & url,
+                        const std::string & parent,
+                        const std::string & origfile,
+                        const std::string & qrcodelink);
+
+    private:
+        std::ofstream ofs;
+};
+
 
 class symbro
 {

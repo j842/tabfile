@@ -1,7 +1,5 @@
 #include <spdlog/spdlog.h>
 
-#include "xlsxwriter.h"
-
 #include "symbro.h"
 #include "utils.h"
 
@@ -70,48 +68,28 @@ void symbro::rescan()
 
 void symbro::make_index()
 {
-    std::filesystem::path indexpath = mOutput/"directory_index.xlsx";
-    create_directories(indexpath.parent_path());
+    spdlog::info("- Creating index at {}.[html,xlsx]",(mOutput/"directory_index").string());
 
-    spdlog::info("- Creating index at {}",indexpath.string());
+    indexwriter_xlsx xlsx(mOutput/"directory_index.xlsx");
+    indexwriter_html html(mOutput/"directory_index.html");
+    std::vector<indexwriter *> writers = {&xlsx,&html}; // just a vector of pointers. Yawn.
 
-    lxw_workbook  * workbook = workbook_new(indexpath.string().c_str());
-    lxw_worksheet * worksheet = workbook_add_worksheet(workbook, "Directory Links");
-
-    worksheet_set_column(worksheet,0,1,50,nullptr);
-    worksheet_set_column(worksheet,2,2,80,nullptr);
-    worksheet_set_column(worksheet,3,3,60,nullptr);
-
-    lxw_format *bold = workbook_add_format(workbook);
-    format_set_bold(bold);
-    format_set_bottom_color(bold,LXW_COLOR_BLACK );
-
-    worksheet_write_string(worksheet, 0, 0, "Link", bold);
-    worksheet_write_string(worksheet, 0, 1, "Parent", bold);
-    worksheet_write_string(worksheet, 0, 2, "Original File", bold);
-    worksheet_write_string(worksheet, 0, 3, "QR Code Link", bold);
-    
     int i=0;
     for (auto const & entry : std::filesystem::directory_iterator(mLinks))
     {
-        i++;
         if (std::filesystem::is_symlink(entry.path()))
         {
+            i++;
             std::string url = getURL(entry.path());
-            worksheet_write_string(worksheet, i, 0, url.c_str(), nullptr);
-
             std::filesystem::path sourcepath = std::filesystem::read_symlink(entry);
             std::string parent = sourcepath.lexically_relative(mSource).parent_path().parent_path();
-            worksheet_write_string(worksheet, i, 1, parent.c_str(), nullptr);
-
             std::string origfile = sourcepath.filename();
-            worksheet_write_string(worksheet, i, 2, origfile.c_str(), nullptr);
-
             std::string qrcodelink = getQRURL(entry.path());
-            worksheet_write_string(worksheet, i, 3, qrcodelink.c_str(), nullptr);
+
+            for (auto & w : writers)
+                w->addrow(i,url,parent,origfile,qrcodelink);
         }
     }
-    workbook_close(workbook);
 }
 
 void symbro::watch()
@@ -177,4 +155,51 @@ std::filesystem::path symbro::getQRPath(std::filesystem::path lnk)
 std::string symbro::getQRURL(std::filesystem::path lnk)
 {
     return mURL+"/qr/"+lnk.filename().string()+kQRext;
+}
+
+indexwriter_xlsx::indexwriter_xlsx(std::filesystem::path p)
+{
+    workbook = workbook_new(p.string().c_str());
+    worksheet = workbook_add_worksheet(workbook, "Directory Links");
+
+    worksheet_set_column(worksheet,0,1,50,nullptr);
+    worksheet_set_column(worksheet,2,2,80,nullptr);
+    worksheet_set_column(worksheet,3,3,60,nullptr);
+
+    lxw_format *bold = workbook_add_format(workbook);
+    format_set_bold(bold);
+    format_set_bottom_color(bold,LXW_COLOR_BLACK );
+
+    worksheet_write_string(worksheet, 0, 0, "Link", bold);
+    worksheet_write_string(worksheet, 0, 1, "Parent", bold);
+    worksheet_write_string(worksheet, 0, 2, "Original File", bold);
+    worksheet_write_string(worksheet, 0, 3, "QR Code Link", bold);
+}
+
+indexwriter_xlsx::~indexwriter_xlsx()
+{
+    workbook_close(workbook);
+}
+
+void indexwriter_xlsx::addrow(int rowindex, const std::string &url, const std::string &parent, const std::string &origfile, const std::string &qrcodelink)
+{
+    worksheet_write_string(worksheet, rowindex, 0, url.c_str(), nullptr);
+    worksheet_write_string(worksheet, rowindex, 1, parent.c_str(), nullptr);
+    worksheet_write_string(worksheet, rowindex, 2, origfile.c_str(), nullptr);
+    worksheet_write_string(worksheet, rowindex, 3, qrcodelink.c_str(), nullptr);
+} 
+
+indexwriter_html::indexwriter_html(std::filesystem::path p)
+{
+    ofs.open(p.string());
+}
+
+indexwriter_html::~indexwriter_html()
+{
+    ofs.close();
+}
+
+void indexwriter_html::addrow(int rowindex, const std::string &url, const std::string &parent, const std::string &origfile, const std::string &qrcodelink)
+{
+    ofs << rowindex << url << parent << origfile << qrcodelink << std::endl;
 }

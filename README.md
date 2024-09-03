@@ -32,7 +32,7 @@ Logs are written to ```/tmp/tabfile.log```. The ```-d``` option causes tabfile t
 
 ## Production Setup
 ```
-sudo apt install libasio-dev libspdlog1.10 libxlsxwriter5
+sudo apt install libasio-dev libspdlog1.20 libxlsxwriter5
 ```
 
 
