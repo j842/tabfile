@@ -8,13 +8,10 @@ BUILD    := ./build
 OBJ_DIR  := $(BUILD)/objects
 APP_DIR  := $(BUILD)
 TARGET   := tabfile
-INCLUDE  := -Isrc/include -Isrc
+INCLUDE  := -Isrc/libs -Isrc
 SRC      :=                      \
    $(wildcard src/*.cpp)         \
-   $(wildcard src/common/*.cpp)    \
-   $(wildcard src/data/*.cpp)    \
-   $(wildcard src/data/IData_classes/*.cpp)    \
-   $(wildcard src/main/*.cpp)    \
+   $(wildcard src/libs/*.cpp)    \
 
 OBJECTS  := $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 DEPENDENCIES \
