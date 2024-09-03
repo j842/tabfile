@@ -5,26 +5,31 @@
 #include "symbro.h"
 #include "utils.h"
 
-
+#include "QrToPng.h"
 
 
 symbro::symbro(std::filesystem::path p, std::string baseURL) :  
     mDir(p),
     mSource(p/"source"),
-    mOutput(p/"output"),
+    _mOutput(p/"output"),
+    mLinks(p/"output"/"links"),
+    mQR(p/"output"/"qr"),
     mURL(baseURL)
 {
     if (!std::filesystem::is_directory(mSource))
         throw std::runtime_error("Missing required directory for source files: "+(mSource).string());
 
-    if (!std::filesystem::is_directory(mOutput))
-        throw std::runtime_error("Missing required directory for output files: "+(mOutput).string());
+    if (!std::filesystem::is_directory(_mOutput))
+        throw std::runtime_error("Missing required directory for output files: "+(_mOutput).string());
+
+    create_directories(mLinks);    
+    create_directories(mQR);    
 }
 
 void symbro::erase()
 {
-    spdlog::info("- Deleting symlinks in {}",mOutput.string());
-    deleteDirectoryContents(mOutput);
+    spdlog::info("- Deleting symlinks in {}",mLinks.string());
+    deleteDirectoryContents(mLinks);
 }
 
 void symbro::rescan()
@@ -52,10 +57,11 @@ void symbro::rescan()
             }
 
             if (foundlatest)
-                checklink(
-                    p,
-                    mOutput/(fname+p.extension().string())
-                );
+            {
+                std::filesystem::path lnk = mLinks/(fname+p.extension().string());
+                checklink(p,lnk);
+                checkqr(lnk);
+            }
         }
 
     std::chrono::steady_clock::time_point tend = std::chrono::steady_clock::now();
@@ -74,6 +80,7 @@ void symbro::make_index()
 
     worksheet_set_column(worksheet,0,1,50,nullptr);
     worksheet_set_column(worksheet,2,2,80,nullptr);
+    worksheet_set_column(worksheet,3,3,60,nullptr);
 
     lxw_format *bold = workbook_add_format(workbook);
     format_set_bold(bold);
@@ -82,16 +89,16 @@ void symbro::make_index()
     worksheet_write_string(worksheet, 0, 0, "Link", bold);
     worksheet_write_string(worksheet, 0, 1, "Parent", bold);
     worksheet_write_string(worksheet, 0, 2, "Original File", bold);
-
-
+    worksheet_write_string(worksheet, 0, 3, "QR Code Link", bold);
+    
     int i=0;
-    for (auto const & entry : std::filesystem::directory_iterator(mOutput))
+    for (auto const & entry : std::filesystem::directory_iterator(mLinks))
     {
         i++;
         if (std::filesystem::is_symlink(entry.path()))
         {
-            std::string url = mURL+"/"+entry.path().filename().string();
-        	worksheet_write_string(worksheet, i, 0, url.c_str(), nullptr);
+            std::string url = getURL(entry.path());
+            worksheet_write_string(worksheet, i, 0, url.c_str(), nullptr);
 
             std::filesystem::path sourcepath = std::filesystem::read_symlink(entry);
             std::string parent = sourcepath.lexically_relative(mSource).parent_path().parent_path();
@@ -99,11 +106,14 @@ void symbro::make_index()
 
             std::string origfile = sourcepath.filename();
             worksheet_write_string(worksheet, i, 2, origfile.c_str(), nullptr);
+
+            std::string qrcodelink = getQRURL(entry.path());
+            worksheet_write_string(worksheet, i, 3, qrcodelink.c_str(), nullptr);
         }
     }
     workbook_close(workbook);
 
-    checklink(indexpath, mOutput/"__directory_index.xlsx");
+    checklink(indexpath, mLinks/"__directory_index.xlsx");
 }
 
 void symbro::watch()
@@ -119,13 +129,14 @@ void symbro::watch()
     }
 }
 
-void symbro::checklink(std::filesystem::path linktarget, std::filesystem::path lnk)
+// returns true if changed.
+bool symbro::checklink(std::filesystem::path linktarget, std::filesystem::path lnk)
 {
     if (std::filesystem::is_symlink(lnk))
     { // is it up to date?
         std::filesystem::path orig = std::filesystem::read_symlink(lnk);
         if (std::filesystem::equivalent(orig,linktarget))
-            return;
+            return false;
     }
 
     if (std::filesystem::exists(lnk))
@@ -135,4 +146,37 @@ void symbro::checklink(std::filesystem::path linktarget, std::filesystem::path l
 
     spdlog::info("-- Created symlink: {} -> {}",
         lnk.filename().string(), linktarget.filename().string());
+
+    return true;
+}
+
+bool symbro::checkqr(std::filesystem::path lnk)
+{
+    std::filesystem::path qr = getQRPath(lnk);
+    
+    if (std::filesystem::is_regular_file(qr))
+        return false;
+
+    std::string url = getURL(lnk);
+    
+    auto exampleQrPng1 = QrToPng(qr.string(), 300, 3, url, true, qrcodegen::QrCode::Ecc::MEDIUM);
+    exampleQrPng1.writeToPNG();
+    return true;
+}
+
+std::string symbro::getURL(std::filesystem::path lnk)
+{
+    std::string url = mURL+"/"+lnk.filename().string();
+    return url;
+}
+
+const std::string kQRext = "_qrcode.png";
+
+std::filesystem::path symbro::getQRPath(std::filesystem::path lnk)
+{
+    return mQR/(lnk.filename().string()+kQRext);
+}
+std::string symbro::getQRURL(std::filesystem::path lnk)
+{
+    return mURL+"/"+lnk.filename().string()+kQRext;
 }
