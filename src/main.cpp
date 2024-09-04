@@ -94,9 +94,9 @@ R"TITLE(
     }
 
     symbro b(mDir,mURL);
-    b.erase();
-    b.rescan();
-    b.make_index();
+    // b.erase();
+    if (b.rescan()>0)
+        b.make_index();
     b.watch();
 }
 

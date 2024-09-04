@@ -61,8 +61,8 @@ class symbro
     public:
         symbro(std::filesystem::path p, std::string baseURL);
 
-        void erase();
-        void rescan();
+        //void erase();
+        int rescan();
         void make_index();
 
         void watch(); // blocks forever!
