@@ -85,9 +85,10 @@ void symbro::make_index()
             std::string parent = sourcepath.lexically_relative(mSource).parent_path().parent_path();
             std::string origfile = sourcepath.filename();
             std::string qrcodelink = getQRURL(entry.path());
+            std::string title = sourcepath.parent_path().filename();
 
             for (auto & w : writers)
-                w->addrow(i,url,parent,origfile,qrcodelink);
+                w->addrow(i,url,parent,origfile,qrcodelink,title);
         }
     }
 }
@@ -181,7 +182,11 @@ indexwriter_xlsx::~indexwriter_xlsx()
     workbook_close(workbook);
 }
 
-void indexwriter_xlsx::addrow(int rowindex, const std::string &url, const std::string &parent, const std::string &origfile, const std::string &qrcodelink)
+void indexwriter_xlsx::addrow(int rowindex, const std::string &url, 
+                            const std::string &parent, 
+                            const std::string &origfile, 
+                            const std::string &qrcodelink,
+                            const std::string & /*title*/)
 {
     worksheet_write_string(worksheet, rowindex, 0, url.c_str(), nullptr);
     worksheet_write_string(worksheet, rowindex, 1, parent.c_str(), nullptr);
@@ -218,6 +223,13 @@ R"HTMLFILE(
                 background-color: #242424;
             }
         </style>
+
+        <script>
+            function copyToClipboard(copyText) {
+            navigator.clipboard.writeText(copyText);
+            alert("Copied the text: " + copyText);
+            }
+        </script>
     </head>
     <body>
         <center>
@@ -229,6 +241,7 @@ R"HTMLFILE(
             <th scope="col">Parent</th>
             <th scope="col">Original File</th>
             <th scope="col">QR Code</th>
+            <th scope="col">Markdown</th>
             </tr>
         </thead>
         <tbody>
@@ -247,12 +260,22 @@ R"HTMLFILE(
     ofs.close();
 }
 
-void indexwriter_html::addrow(int /*rowindex*/, const std::string &url, const std::string &parent, const std::string &origfile, const std::string &qrcodelink)
+void indexwriter_html::addrow(int /*rowindex*/, const std::string &url, 
+                            const std::string &parent, 
+                            const std::string &origfile, 
+                            const std::string &qrcodelink,
+                            const std::string & title)
 {
+    std::ostringstream markdown;
+    markdown << "[" << title <<" Link]";
+    markdown << "(" << url << "){target=_blank} ";
+    markdown << "([QR Code]("<<qrcodelink<<"))";
+
     ofs << "<tr>" << std::endl <<
     "<td><a href=\""<<url<<"\">"<<url<<"</a></td>"<<std::endl <<
     "<td>"<<parent<<"</td>"<<std::endl <<
     "<td>"<<origfile<<"</td>"<<std::endl <<
-    "<td><a href=\""<<qrcodelink<<"\">"<<qrcodelink<<"</a></td>" <<std::endl <<
+    "<td><a href=\""<<qrcodelink<<"\">QR Code</a></td>" <<std::endl <<
+    "<td><button onclick=\"copyToClipboard('"+markdown.str()+"')\">Markdown</button></td>" <<std::endl <<
     "</tr>"<<std::endl;
 }

@@ -15,7 +15,8 @@ class indexwriter
                             const std::string & url,
                             const std::string & parent,
                             const std::string & origfile,
-                            const std::string & qrcodelink) =0;
+                            const std::string & qrcodelink,
+                            const std::string & title) =0;
 };
 
 class indexwriter_xlsx : public indexwriter
@@ -28,7 +29,8 @@ class indexwriter_xlsx : public indexwriter
                         const std::string & url,
                         const std::string & parent,
                         const std::string & origfile,
-                        const std::string & qrcodelink);
+                        const std::string & qrcodelink,
+                        const std::string & title);
 
     private:
         lxw_workbook  * workbook;
@@ -46,7 +48,8 @@ class indexwriter_html : public indexwriter
                         const std::string & url,
                         const std::string & parent,
                         const std::string & origfile,
-                        const std::string & qrcodelink);
+                        const std::string & qrcodelink,
+                        const std::string & title);
 
     private:
         std::ofstream ofs;
