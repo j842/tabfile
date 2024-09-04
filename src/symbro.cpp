@@ -66,6 +66,11 @@ void symbro::rescan()
     spdlog::info("- Rescan completed in {} ms",std::chrono::duration_cast<std::chrono::milliseconds>(tend - tbegin).count());
 }
 
+void replaceunderscores(std::string & s)
+{
+    std::replace( s.begin(), s.end(), '_', ' '); 
+}
+
 void symbro::make_index()
 {
     spdlog::info("- Creating index at {}.[html,xlsx]",(mOutput/"directory_index").string());
@@ -86,6 +91,7 @@ void symbro::make_index()
             std::string origfile = sourcepath.filename();
             std::string qrcodelink = getQRURL(entry.path());
             std::string title = sourcepath.parent_path().filename();
+            replaceunderscores(title);
 
             for (auto & w : writers)
                 w->addrow(i,url,parent,origfile,qrcodelink,title);
@@ -267,9 +273,9 @@ void indexwriter_html::addrow(int /*rowindex*/, const std::string &url,
                             const std::string & title)
 {
     std::ostringstream markdown;
-    markdown << "[" << title <<" Link]";
+    markdown << title << ": [PermaLink]";
     markdown << "(" << url << "){target=_blank} ";
-    markdown << "([QR Code]("<<qrcodelink<<"))";
+    markdown << "([QR Code]("<<qrcodelink<<"){target=_blank})";
 
     ofs << "<tr>" << std::endl <<
     "<td><a href=\""<<url<<"\">"<<url<<"</a></td>"<<std::endl <<
