@@ -44,7 +44,7 @@ watcher::watcher(std::vector<std::string> recursivepaths)
                 if (dir_entry.is_directory())
                     wd.push_back(
                         inotify_add_watch( fd, dir_entry.path().c_str(), 
-                        IN_CLOSE_WRITE | IN_MOVED_TO | IN_MOVE_SELF | IN_DELETE_SELF | IN_DELETE  /*| IN_CREATE | IN_DELETE | IN_MOVED_FROM | IN_MOVED_TO*/ )
+                        IN_CLOSE_WRITE | IN_MOVED_TO | IN_MOVE_SELF | IN_DELETE_SELF | IN_DELETE | IN_CREATE )
                     );
         }
     }
