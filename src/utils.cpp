@@ -132,3 +132,22 @@ void trim(std::string &str)
     str.erase(str.find_last_not_of(typeOfWhitespaces) + 1);
     str.erase(0, str.find_first_not_of(typeOfWhitespaces));
 }
+
+std::string escapeurl(const std::string &url)
+{
+    std::ostringstream oss;
+
+    for (auto i : url)
+    {
+        switch (i)
+        {
+            case ' ':
+                oss << "%20";
+                break;
+            default:
+                oss << i;
+        }
+    }
+
+    return oss.str();
+}

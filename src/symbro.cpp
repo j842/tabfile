@@ -167,7 +167,7 @@ bool symbro::checkqr(std::filesystem::path lnk)
 std::string symbro::getURL(std::filesystem::path lnk)
 {
     std::string url = mURL+"/"+lnk.filename().string();
-    return url;
+    return escapeurl(url);
 }
 
 const std::string kQRext = "_qrcode.png";
@@ -176,7 +176,9 @@ std::filesystem::path symbro::getQRPath(std::filesystem::path lnk)
 {
     return mQR/(lnk.filename().string()+kQRext);
 }
+
 std::string symbro::getQRURL(std::filesystem::path lnk)
 {
-    return mURL+"/qr/"+lnk.filename().string()+kQRext;
+    std::string url = mURL+"/qr/"+lnk.filename().string()+kQRext;
+    return escapeurl(url);
 }

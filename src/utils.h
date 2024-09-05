@@ -34,7 +34,7 @@ class watcher
 bool ichar_equals(char a, char b);
 bool iequals(const std::string &a, const std::string &b);
 void trim(std::string &str);
-
+std::string escapeurl(const std::string &url);
 
 
 #endif
