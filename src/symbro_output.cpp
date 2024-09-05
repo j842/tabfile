@@ -18,9 +18,9 @@ indexwriter_xlsx::indexwriter_xlsx(std::filesystem::path p)
     format_set_bold(bold);
     format_set_bottom_color(bold,LXW_COLOR_BLACK );
 
-    worksheet_write_string(worksheet, 0, 0, "Link", bold);
-    worksheet_write_string(worksheet, 0, 1, "Parent", bold);
-    worksheet_write_string(worksheet, 0, 2, "Original File", bold);
+    worksheet_write_string(worksheet, 0, 0, "PermaLink", bold);
+    worksheet_write_string(worksheet, 0, 1, "Location", bold);
+    worksheet_write_string(worksheet, 0, 2, "Target File", bold);
     worksheet_write_string(worksheet, 0, 3, "QR Code Link", bold);
 }
 
@@ -84,11 +84,11 @@ R"HTMLFILE(
         <table>
         <thead>
             <tr>
-            <th scope="col">Link</th>
-            <th scope="col">Parent</th>
-            <th scope="col">Original File</th>
+            <th scope="col">Location</th>
+            <th scope="col">PermaLink</th>
             <th scope="col">QR Code</th>
             <th scope="col">Markdown</th>
+            <th scope="col">Current Target File</th>
             </tr>
         </thead>
         <tbody>
@@ -119,10 +119,12 @@ void indexwriter_html::addrow(int /*rowindex*/, const std::string &url,
     markdown << "([QR Code]("<<qrcodelink<<"){target=_blank})";
 
     ofs << "<tr>" << std::endl <<
-    "<td><a href=\""<<url<<"\">"<<url<<"</a></td>"<<std::endl <<
+
     "<td>"<<parent<<"</td>"<<std::endl <<
-    "<td>"<<origfile<<"</td>"<<std::endl <<
+    "<td><a href=\""<<url<<"\">PermaLink</a></td>"<<std::endl <<
     "<td><a href=\""<<qrcodelink<<"\">QR Code</a></td>" <<std::endl <<
     "<td><button onclick=\"copyToClipboard('"+markdown.str()+"')\">Markdown</button></td>" <<std::endl <<
+    "<td>"<<origfile<<"</td>"<<std::endl <<
+
     "</tr>"<<std::endl;
 }

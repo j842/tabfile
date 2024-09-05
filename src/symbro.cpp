@@ -103,7 +103,7 @@ void symbro::make_index()
             i++;
             std::string url = getURL(entry.path());
             std::filesystem::path sourcepath = std::filesystem::read_symlink(entry);
-            std::string parent = sourcepath.lexically_relative(mSource).parent_path().parent_path();
+            std::string parent = sourcepath.lexically_relative(mSource).parent_path();
             std::string origfile = sourcepath.filename();
             std::string qrcodelink = getQRURL(entry.path());
             std::string title = sourcepath.parent_path().filename();
